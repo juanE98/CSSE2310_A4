@@ -1,0 +1,417 @@
+URL to view log online:
+https://source.eait.uq.edu.au/viewvc/csse2310-sem2-s4431796/trunk/a4/?view=log
+
+------------------------------------------------------------------------
+r1 | uqpsutto@uq.edu.au | 2021-08-03 11:11:48 +1000 (Tue, 03 Aug 2021) | 1 line
+Changed paths:
+   A /prac2
+   A /trunk
+   A /trunk/a1
+   A /trunk/a3
+   A /trunk/a4
+
+Initial repository structure
+
+
+------------------------------------------------------------------------
+r66 | s4431796 | 2021-10-18 23:16:32 +1000 (Mon, 18 Oct 2021) | 1 line
+Changed paths:
+   A /trunk/a4/Makefile
+   A /trunk/a4/intclient.c
+
+initial commit; Parses command line arguments for intclient, defined exitCodes and initial attempts to read jobfile if present. Makefile created.
+
+Index: Makefile
+ Makefile |   31 +++++++++++++++++++++++++++++++
+ 1 file changed, 31 insertions(+)
+Index: intclient.c
+ intclient.c |   92 ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 92 insertions(+)
+
+------------------------------------------------------------------------
+r67 | s4431796 | 2021-10-18 23:59:05 +1000 (Mon, 18 Oct 2021) | 1 line
+Changed paths:
+   M /trunk/a4/Makefile
+   M /trunk/a4/intclient.c
+   A /trunk/a4/intserver.c
+
+created intserver - parses command line arguments for portnum and maxthreads. Added to Makefile; intclient.c portNum changed to char* to accept service name. added JobFile struct to help store parsed info from each line in jobfile.
+
+Index: Makefile
+ Makefile |    4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+Index: intclient.c
+ intclient.c |   47 ++++++++++++++++++++++++++++++-----------------
+ 1 file changed, 30 insertions(+), 17 deletions(-)
+Index: intserver.c
+ intserver.c |   41 +++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 41 insertions(+)
+
+------------------------------------------------------------------------
+r68 | s4431796 | 2021-10-19 00:11:06 +1000 (Tue, 19 Oct 2021) | 1 line
+Changed paths:
+   M /trunk/a4/Makefile
+
+modified makefile to create 2 executables for server and client.
+
+Index: Makefile
+ Makefile |   10 +++++-----
+ 1 file changed, 5 insertions(+), 5 deletions(-)
+
+------------------------------------------------------------------------
+r69 | s4431796 | 2021-10-19 18:47:27 +1000 (Tue, 19 Oct 2021) | 1 line
+Changed paths:
+   M /trunk/a4/Makefile
+   M /trunk/a4/intclient.c
+
+validates cmd args in process_cmd_args() in intclient.c
+
+Index: Makefile
+ Makefile |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+Index: intclient.c
+ intclient.c |   86 ++++++++++++++++++++++++++++++++++++++++++++++--------------
+ 1 file changed, 67 insertions(+), 19 deletions(-)
+
+------------------------------------------------------------------------
+r70 | s4431796 | 2021-10-19 23:18:42 +1000 (Tue, 19 Oct 2021) | 1 line
+Changed paths:
+   M /trunk/a4/Makefile
+   A /trunk/a4/compute.c
+   M /trunk/a4/intclient.c
+   M /trunk/a4/intserver.c
+
+Added compute.c to integrate functions given paramters excluding thread nummber. Takes in arguments for char* function, float lower, float upper, int segments and prints out the result to stdout.
+
+Index: Makefile
+ Makefile |   18 ++++++++++--------
+ 1 file changed, 10 insertions(+), 8 deletions(-)
+Index: compute.c
+ compute.c |   53 +++++++++++++++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 53 insertions(+)
+Index: intclient.c
+ intclient.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+Index: intserver.c
+ intserver.c |    7 +------
+ 1 file changed, 1 insertion(+), 6 deletions(-)
+
+------------------------------------------------------------------------
+r71 | s4431796 | 2021-10-21 15:05:27 +1000 (Thu, 21 Oct 2021) | 1 line
+Changed paths:
+   M /trunk/a4/compute.c
+   M /trunk/a4/intclient.c
+
+process_cmd_args() can now parse -v as a jobfile instead of being ignored as a -v arg; compute.c float variables changed to double; read_jobfile() reads a given jobfile and if no syntax or jobfile errors are detected, it will proceed to send it to the server. Syntax errors check implemented with validate_jobfile_syntax(); jobfile_error() created to print out error messages for job rules violated. enum JobError was created to help identify and match these errors. Will be used in validate_jobfile().
+
+Index: compute.c
+ compute.c |    8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
+Index: intclient.c
+ intclient.c |  212 +++++++++++++++++++++++++++++++++++++++++++++++++++++++++---
+ 1 file changed, 204 insertions(+), 8 deletions(-)
+
+------------------------------------------------------------------------
+r72 | s4431796 | 2021-10-21 19:20:57 +1000 (Thu, 21 Oct 2021) | 1 line
+Changed paths:
+   M /trunk/a4/intclient.c
+
+implemented parse_jobfile() to help parse job details and returns it as a struct; implemented validate_jobfile() to check if job rules have been violated and prints out error messages if there are any.
+
+Index: intclient.c
+ intclient.c |   80 +++++++++++++++++++++++++++++++++++++++++++++++++-----------
+ 1 file changed, 66 insertions(+), 14 deletions(-)
+
+------------------------------------------------------------------------
+r73 | s4431796 | 2021-10-21 23:49:49 +1000 (Thu, 21 Oct 2021) | 1 line
+Changed paths:
+   M /trunk/a4/intserver.c
+
+usage error checking for intserver.c implemented; listen_to() implemented to listen on the given port. Prints out the port number. If ephermeral is given, the port number is printed out (line 61). allows to listen up to 10 connection requests so far.
+
+Index: intserver.c
+ intserver.c |  100 +++++++++++++++++++++++++++++++++++++++++++++++++++---------
+ 1 file changed, 86 insertions(+), 14 deletions(-)
+
+------------------------------------------------------------------------
+r74 | s4431796 | 2021-10-23 02:55:26 +1000 (Sat, 23 Oct 2021) | 1 line
+Changed paths:
+   M /trunk/a4/intclient.c
+   M /trunk/a4/intserver.c
+
+added BAD_EXPRESSION to intclient.c to be used if function is invalid checked by intserver and reported back to intserver. Error message will be printed out after receiving response from intserver separately from jobfile_error(); connect_to_server() now returns the server file descriptor instead of ExitCode. request_validate_expression() added to construct a HTTP request to send to intserver for validating the expression given. serverFd is added to read_jobfile(); program exits at line 160 if INVALID_PORTNUM is triggered.
+
+Index: intclient.c
+ intclient.c |   49 ++++++++++++++++++++++++++++++++-----------------
+ 1 file changed, 32 insertions(+), 17 deletions(-)
+Index: intserver.c
+ intserver.c |    6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
+
+------------------------------------------------------------------------
+r75 | s4431796 | 2021-10-23 15:43:42 +1000 (Sat, 23 Oct 2021) | 1 line
+Changed paths:
+   M /trunk/a4/intclient.c
+
+FUNCTION_BUFFER size reduced from 30 to 10. REQUEST_BUFFER reduced from 150 to 30. intclient.c now able to construct and send HTTP request to server.
+
+Index: intclient.c
+ intclient.c |   19 +++++++++++++++----
+ 1 file changed, 15 insertions(+), 4 deletions(-)
+
+------------------------------------------------------------------------
+r76 | s4431796 | 2021-10-24 21:47:14 +1000 (Sun, 24 Oct 2021) | 1 line
+Changed paths:
+   M /trunk/a4/intclient.c
+   M /trunk/a4/intserver.c
+
+intclient.c usage error now checks for invalid extra arguments. Line 333, fixed spelling of 'syntax'; Implemented read_stdin which takes in user input if no jobfile is specified; intclient.c now able to receive response from server whether or not expression is valid; started to create HTTP request for integration but not yet implemented. A lot of code duplication, need to fix for HTTP sending and receiving.
+
+Index: intclient.c
+ intclient.c |  125 +++++++++++++++++++++++++++++++++++++++++++++++++++++-------
+ 1 file changed, 111 insertions(+), 14 deletions(-)
+Index: intserver.c
+ intserver.c |   33 ++++++++++++++++++++++++++++++---
+ 1 file changed, 30 insertions(+), 3 deletions(-)
+
+------------------------------------------------------------------------
+r77 | s4431796 | 2021-10-25 01:33:07 +1000 (Mon, 25 Oct 2021) | 1 line
+Changed paths:
+   M /trunk/a4/intclient.c
+
+bad expression error message changed for intclient.c in line 333; added RESPONSE_BUFFER macro; implemented request_integrate_function() which sends an integration request following a valid expression confirmation received from server. It also receives the response from the serve; intclient now receives data with read instead of fread, to prevent it as a blocking call.
+
+Index: intclient.c
+ intclient.c |  112 +++++++++++++++++++++---------------------------------------
+ 1 file changed, 41 insertions(+), 71 deletions(-)
+
+------------------------------------------------------------------------
+r78 | s4431796 | 2021-10-25 23:26:46 +1000 (Mon, 25 Oct 2021) | 1 line
+Changed paths:
+   M /trunk/a4/intclient.c
+
+sending HTTP requests to server now uses send() instead of fprintf(). Implemented communication error code with exit code 3 as INVALID_COMM. Attempted to get user input using fgets but not successfully implemented yet. Implemented emit_overall_result() which displays final message with answer to stdout.  
+
+Index: intclient.c
+ intclient.c |   80 ++++++++++++++++++++++++++++++++++++++----------------------
+ 1 file changed, 51 insertions(+), 29 deletions(-)
+
+------------------------------------------------------------------------
+r79 | s4431796 | 2021-10-26 17:01:08 +1000 (Tue, 26 Oct 2021) | 1 line
+Changed paths:
+   M /trunk/a4/Makefile
+   M /trunk/a4/intclient.c
+   M /trunk/a4/intserver.c
+
+removed dup() for serverFd in intclient.c; allows user input to be read from stdin using fgets(); added additional INVALID_COMM errors. Added shared.c to be compiled and linked with intserver.c and intclient.c; free(line) moved after while loop in read_jobfile(). Implemented CTRL+D as an EOF for user input and handles it by exiting the program.
+
+Index: Makefile
+ Makefile |   13 ++++++++-----
+ 1 file changed, 8 insertions(+), 5 deletions(-)
+Index: intclient.c
+ intclient.c |   62 +++++++++++++++++++++++++++++++++++-------------------------
+ 1 file changed, 37 insertions(+), 25 deletions(-)
+Index: intserver.c
+ intserver.c |   43 +++++++++++++++++++++++++------------------
+ 1 file changed, 25 insertions(+), 18 deletions(-)
+
+------------------------------------------------------------------------
+r80 | s4431796 | 2021-10-27 00:22:03 +1000 (Wed, 27 Oct 2021) | 1 line
+Changed paths:
+   M /trunk/a4/intclient.c
+   M /trunk/a4/intserver.c
+
+intclient handles communication error by evaluating read() result if it is 0; intserver.c REQUEST_BUFFER increased to 50; intserver.c prints out port number and flushes to stderr; intserver checks for invalid portnumber as a string (word)
+
+Index: intclient.c
+ intclient.c |   34 ++++++++++++++++++++--------------
+ 1 file changed, 20 insertions(+), 14 deletions(-)
+Index: intserver.c
+ intserver.c |   80 +++++++++++++++++++++++++++++++++++++++++++++++-------------
+ 1 file changed, 63 insertions(+), 17 deletions(-)
+
+------------------------------------------------------------------------
+r81 | s4431796 | 2021-10-27 19:34:30 +1000 (Wed, 27 Oct 2021) | 1 line
+Changed paths:
+   M /trunk/a4/intserver.c
+
+increrased macro BUFFER sizes for intserver.c; implemented server receiving HTTP request for expression validation. Constructs a HTTP response and sends it back to the client. added validate_expression to validate given expression from client using tinyexpr lib.
+
+Index: intserver.c
+ intserver.c |   64 +++++++++++++++++++++++++++++++++++++++++++++++-------------
+ 1 file changed, 51 insertions(+), 13 deletions(-)
+
+------------------------------------------------------------------------
+r82 | s4431796 | 2021-10-27 20:15:43 +1000 (Wed, 27 Oct 2021) | 1 line
+Changed paths:
+   M /trunk/a4/intclient.c
+
+increased BUFFER size macros for intclient. removed INVALID_COMM error exiting program after bad expression detected, allowing more user inputs if required; 
+
+Index: intclient.c
+ intclient.c |   12 ++++++------
+ 1 file changed, 6 insertions(+), 6 deletions(-)
+
+------------------------------------------------------------------------
+r83 | s4431796 | 2021-10-28 02:42:35 +1000 (Thu, 28 Oct 2021) | 1 line
+Changed paths:
+   M /trunk/a4/intserver.c
+
+intserver correctly handles invalid and badly formed HTTP requests; added a loop to check for incomplete HTTP requests, server keeps on reading until a badly formed request is parsed or a complete HTTP request is parsed and then will be checked; closes connection and disconnects client if parse_HTTP_request() in line receives a 0 or -1
+
+Index: intserver.c
+ intserver.c |   86 +++++++++++++++++++++++++++++++++---------------------------
+ 1 file changed, 48 insertions(+), 38 deletions(-)
+
+------------------------------------------------------------------------
+r84 | s4431796 | 2021-10-28 18:40:31 +1000 (Thu, 28 Oct 2021) | 1 line
+Changed paths:
+   M /trunk/a4/intserver.c
+
+passed tests 10-11 except 11.2; closed(fd) and used pthread_exit(NULL)
+
+Index: intserver.c
+ intserver.c |   39 +++++++++++++++++++++++----------------
+ 1 file changed, 23 insertions(+), 16 deletions(-)
+
+------------------------------------------------------------------------
+r85 | s4431796 | 2021-10-29 01:09:26 +1000 (Fri, 29 Oct 2021) | 1 line
+Changed paths:
+   M /trunk/a4/intserver.c
+
+client thread loop changed to a while loop where number of bytes read is greater than 0. This ensures that EOF is not reached and server will keep on reading and parsing. Passes tests 10.1-10.3 and 11.1,11.2; Modified server_response() to accomodate for integrate requests - not yet fully implemented.
+
+Index: intserver.c
+ intserver.c |   51 ++++++++++++++++++++++++++++++---------------------
+ 1 file changed, 30 insertions(+), 21 deletions(-)
+
+------------------------------------------------------------------------
+r86 | s4431796 | 2021-10-30 00:29:11 +1000 (Sat, 30 Oct 2021) | 1 line
+Changed paths:
+   M /trunk/a4/intclient.c
+   M /trunk/a4/intserver.c
+
+moved struct JobFile and enum JobError to shared.h, moved parse_jobdetails() and validate_jobfile() to shared.h and shared.c so that it can be also used by intserver.c; intserver now passes all 11. tests; intserver is now able to validate integration requests.
+
+Index: intclient.c
+ intclient.c |   87 ++----------------------------------------------------------
+ 1 file changed, 3 insertions(+), 84 deletions(-)
+Index: intserver.c
+ intserver.c |   92 +++++++++++++++++++++++++++++++++++++++++++++---------------
+ 1 file changed, 69 insertions(+), 23 deletions(-)
+
+------------------------------------------------------------------------
+r87 | s4431796 | 2021-10-31 04:24:11 +1000 (Sun, 31 Oct 2021) | 1 line
+Changed paths:
+   M /trunk/a4/intserver.c
+
+integration for tests 13.1 and 13.2 passed. IImplemented calculate_integration() which calculates integration single threaded.; Implemented server_response for integration request without Verbose. Verbose checking included in integrate_response but result for verbose not yet implemented.
+
+Index: intserver.c
+ intserver.c |  135 ++++++++++++++++++++++++++++++++++++++++++++++++------------
+ 1 file changed, 108 insertions(+), 27 deletions(-)
+
+------------------------------------------------------------------------
+r88 | s4431796 | 2021-10-31 15:06:03 +1000 (Sun, 31 Oct 2021) | 1 line
+Changed paths:
+   M /trunk/a4/intserver.c
+
+basic integration working for server, passed all tests for 13. Single threaded only
+
+Index: intserver.c
+ intserver.c |    7 ++++---
+ 1 file changed, 4 insertions(+), 3 deletions(-)
+
+------------------------------------------------------------------------
+r89 | s4431796 | 2021-10-31 23:47:55 +1000 (Sun, 31 Oct 2021) | 1 line
+Changed paths:
+   M /trunk/a4/Makefile
+   M /trunk/a4/intclient.c
+   M /trunk/a4/intserver.c
+
+removed compute.c, fixed style; added struct Compute to intserver.c to store information for integration. All 13 tests passed, iterates using segments as an int instead of (double) parts for calculate_integration() for loop
+
+Index: Makefile
+ Makefile |    5 +----
+ 1 file changed, 1 insertion(+), 4 deletions(-)
+Index: intclient.c
+ intclient.c |   43 +++++++++++++++++++++++++++++++------------
+ 1 file changed, 31 insertions(+), 12 deletions(-)
+Index: intserver.c
+ intserver.c |  109 +++++++++++++++++++++++++++++++++++++-----------------------
+ 1 file changed, 68 insertions(+), 41 deletions(-)
+
+------------------------------------------------------------------------
+r90 | s4431796 | 2021-11-01 00:09:24 +1000 (Mon, 01 Nov 2021) | 1 line
+Changed paths:
+   D /trunk/a4/compute.c
+   M /trunk/a4/intclient.c
+   M /trunk/a4/intserver.c
+
+removed magic numbers, style checked for final submission
+
+Index: compute.c (deleted)
+Index: intclient.c
+ intclient.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+Index: intserver.c
+ intserver.c |    4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+------------------------------------------------------------------------
+r91 | s4431796 | 2021-11-01 00:38:16 +1000 (Mon, 01 Nov 2021) | 1 line
+Changed paths:
+   M /trunk/a4/Makefile
+   M /trunk/a4/intserver.c
+
+changes to makefile to build intserver and intclient separetely
+
+Index: intserver.c
+ intserver.c |    4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+Index: Makefile
+ Makefile |   25 ++++++++++++++-----------
+ 1 file changed, 14 insertions(+), 11 deletions(-)
+
+------------------------------------------------------------------------
+r92 | s4431796 | 2021-11-01 00:47:43 +1000 (Mon, 01 Nov 2021) | 1 line
+Changed paths:
+   M /trunk/a4/Makefile
+
+modified makefile, removed .o files for intserver and intclient
+
+Index: Makefile
+ Makefile |   14 ++++----------
+ 1 file changed, 4 insertions(+), 10 deletions(-)
+
+------------------------------------------------------------------------
+r93 | s4431796 | 2021-11-01 00:50:50 +1000 (Mon, 01 Nov 2021) | 1 line
+Changed paths:
+   A /trunk/a4/shared.c
+   A /trunk/a4/shared.h
+
+added shared.c and shared.h to repo
+
+Index: shared.h
+ shared.h |   45 +++++++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 45 insertions(+)
+Index: shared.c
+ shared.c |  113 +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 113 insertions(+)
+
+------------------------------------------------------------------------
+r94 | s4431796 | 2021-11-01 03:21:43 +1000 (Mon, 01 Nov 2021) | 1 line
+Changed paths:
+   M /trunk/a4/intclient.c
+   M /trunk/a4/shared.c
+
+passed all 3. tests. Used sprintf() to print out the word and match to original string to compare threads and segments values in validate_jobfile_syntax()
+
+Index: intclient.c
+ intclient.c |   27 ++++++++++++++++++---------
+ 1 file changed, 18 insertions(+), 9 deletions(-)
+Index: shared.c
+ shared.c |    4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+------------------------------------------------------------------------
